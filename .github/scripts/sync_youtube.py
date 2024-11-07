@@ -10,7 +10,7 @@ API_URL = 'https://api.getport.io/v1'
 CLIENT_ID = os.environ.get('PORT_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('PORT_CLIENT_SECRET')
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
-PLAYLIST_ID = 'PL5ErBr2d3QJH0kbwTQ7HSuzvBb4zIWzhy'
+PLAYLIST_ID = os.environ.get('YOUTUBE_PLAYLIST_ID')
 
 # Ensure all required environment variables are present
 if not all([CLIENT_ID, CLIENT_SECRET, YOUTUBE_API_KEY, PLAYLIST_ID]):
@@ -44,6 +44,14 @@ def fetch_playlist_items(youtube_api_key, playlist_id):
 
     return items
 
+# Fetch video duration using YouTube API
+def get_video_duration(youtube_api_key, video_id):
+    youtube = build('youtube', 'v3', developerKey=youtube_api_key)
+    request = youtube.videos().list(part="contentDetails", id=video_id)
+    response = request.execute()
+    duration = response['items'][0]['contentDetails']['duration']
+    return duration
+
 # Step 4: Create an entity in Port
 def create_entity(api_url, blueprint_id, entity_data, access_token):
     headers = {
@@ -64,6 +72,7 @@ def main():
         "title": playlist['snippet']['title'],
         "properties": {
             "playlistId": PLAYLIST_ID,
+            "title": playlist['snippet']['title'],
             "description": playlist['snippet'].get('description', ''),
             "videoCount": playlist['contentDetails']['itemCount']
         }
@@ -73,13 +82,20 @@ def main():
     # Fetch and sync videos
     videos = fetch_playlist_items(YOUTUBE_API_KEY, PLAYLIST_ID)
     for video in videos:
+        video_id = video['contentDetails']['videoId']
+        
+        # Fetch video duration
+        duration = get_video_duration(YOUTUBE_API_KEY, video_id)
+        
         video_entity = {
-            "identifier": video['contentDetails']['videoId'],
+            "identifier": video_id,
             "title": video['snippet']['title'],
             "properties": {
-                "videoId": video['contentDetails']['videoId'],
+                "title": video['snippet']['title'],
+                "videoId": video_id,
                 "description": video['snippet'].get('description', ''),
-                "thumbnailUrl": video['snippet']['thumbnails']['default']['url']
+                "thumbnailUrl": video['snippet']['thumbnails']['default']['url'],
+                "duration": duration  # Add duration to the properties
             },
             "relations": {
                 "playlist": PLAYLIST_ID
