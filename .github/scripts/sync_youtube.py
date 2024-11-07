@@ -87,5 +87,5 @@ def main():
         }
         create_entity(API_URL, "youtube-video", video_entity, access_token)
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()
