@@ -81,6 +81,7 @@ while True:
     playlist_items = playlist_items_request.execute()
     
     # Process each video in the batch
+    err = 0
     for item in playlist_items['items']:
         video_id = item['contentDetails']['videoId']
         video_ids.append(video_id)
@@ -103,7 +104,10 @@ while True:
         print(f'View - {video_id}',viewCount_q)
         likeCount_q = video_details['statistics']['likeCount']  # New property
         print(f'Like - {video_id}',likeCount_q)
-        commentCount_q =  video_details['statistics']['commentCount'] 
+        commentCount_q =  video_details['statistics'].get('commentCount','0') 
+        if commentCount == 0:
+            print("error", err)
+            err += 1
         print(f'Comment - {video_id}',commentCount_q)
 
         #
