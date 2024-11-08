@@ -10,7 +10,7 @@ API_URL = 'https://api.getport.io/v1'
 CLIENT_ID = os.environ.get('PORT_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('PORT_CLIENT_SECRET')
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
-PLAYLIST_ID = 'PLpceAx4bWoTMmBJ-TL2g0futt0CSja6Jc'
+PLAYLIST_ID = 'PLTwEf67PTkOs3KkKClKbddX2ckHaGDV3Z'
 
 # Ensure all required environment variables are present
 if not all([CLIENT_ID, CLIENT_SECRET, YOUTUBE_API_KEY, PLAYLIST_ID]):
