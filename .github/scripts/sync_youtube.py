@@ -98,6 +98,15 @@ while True:
         duration_str = format_duration(youtube_duration)
         
         # Create video entity with additional properties
+
+        viewCount_q = video_details['statistics']['viewCount']  # New property
+        print(viewCount_q)
+        likeCount_q = video_details['statistics']['likeCount']  # New property
+        print(likeCount_q)
+        commentCount_q =  video_details['statistics']['commentCount'] 
+        print(commentCount_q)
+
+        #
         video_entity = {
             "identifier": video_id,
             "title": item['snippet']['title'],
