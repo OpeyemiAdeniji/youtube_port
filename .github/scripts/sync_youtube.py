@@ -54,6 +54,7 @@ def get_video_duration(youtube_api_key, video_id):
 
 # Step 4: Create an entity in Port
 def create_entity(api_url, blueprint_id, entity_data, access_token):
+    print(blueprint_id)
     headers = {
         'Authorization': f'Bearer {access_token}'
     }
