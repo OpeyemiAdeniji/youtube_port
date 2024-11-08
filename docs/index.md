@@ -1,35 +1,43 @@
+
 # Ingest and Visualize YouTube Playlist Data in Port
 
-This guide takes approximately 30 minutes to complete and aims to demonstrate the value of Port's integration with external data sources like YouTube.
+This guide takes approximately 30 minutes to complete and demonstrates the value of integrating Port with external data sources like YouTube.
 
-:::info Prerequisites
+## Prerequisites
 
-- This guide assumes you have a Port account and that you have completed the [onboarding process](/quickstart). 
+- Ensure you have a Port account and have completed the [onboarding process](/quickstart).
 - Access to a GitHub repository for workflow integration.
 - API keys and credentials: Port Client ID, Client Secret, and YouTube API Key.
 
-:::
+## Goal of This Guide
 
-<br/>
+This guide will walk you through:
 
-### The goal of this guide
+- Creating and configuring blueprints in Port for YouTube data.
+- Setting up a GitHub workflow to automate data ingestion from YouTube.
+- Visualizing and analyzing the ingested data in Port.
 
-In this guide, we will model and visualize YouTube playlist and video data in Port.
+---
 
-By completing this guide, you will understand:
+## Step 1: Create Blueprints in Port
 
-- How to create and configure blueprints in Port for YouTube data.
-- How to set up a GitHub workflow to automate data ingestion from YouTube.
-- How to visualize and analyze the ingested data in Port.
+### 1.1 Log in to Your Port Account
+Access Port's web app and log in with your credentials.
 
-<br/>
+### 1.2 Navigate to the Builder Section
+Click on **"Builder"** in the left-hand navigation menu. This is where you create and manage blueprints.
 
-### Step 1: Create Blueprints in Port
+### 1.3 Create a Blueprint for YouTube Video
+1. Click on **"New Blueprint"** at the top right corner of the Builder page.
+2. Configure the blueprint details:
+   - **Identifier**: `youtubeVideo`
+   - **Title**: `YouTube Video`
+   - **Icon**: Choose an icon representing a video (optional).
 
-Create blueprints for both `YouTube Video` and `YouTube Playlist`:
+### Define the Schema
+Add properties to the YouTube Video blueprint with names, types, and whether they are required:
 
 #### Blueprint for YouTube Video
-
 - **Properties**:
   - `videoId`: string (required)
   - `title`: string (required)
@@ -39,30 +47,40 @@ Create blueprints for both `YouTube Video` and `YouTube Playlist`:
   - `viewCount`: number
   - `likeCount`: number
   - `commentCount`: number
+- **Relation**: `belongs_to_playlist` to `YouTube Playlist`.
 
 **Example JSON**:
-```json showLineNumbers
+```json
 {
   "identifier": "youtubeVideo",
+  "description": "This blueprint represents a video in our software catalog",
   "title": "YouTube Video",
+  "icon": "Widget",
   "schema": {
     "properties": {
-      "videoId": {"type": "string", "title": "Video ID"},
-      "title": {"type": "string", "title": "Title"},
-      "description": {"type": "string", "title": "Description"},
-      "thumbnailUrl": {"type": "string", "title": "Thumbnail URL"},
-      "duration": {"type": "string", "title": "Duration"},
-      "viewCount": {"type": "number", "title": "View Count"},
-      "likeCount": {"type": "number", "title": "Like Count"},
-      "commentCount": {"type": "number", "title": "Comment Count"}
+      "videoId": { "type": "string", "title": "Video ID" },
+      "title": { "type": "string", "title": "Title" },
+      "description": { "type": "string", "title": "Description" },
+      "thumbnailUrl": { "type": "string", "title": "Thumbnail URL" },
+      "duration": { "type": "string", "title": "Duration" },
+      "viewCount": { "type": "number", "title": "View Count" },
+      "likeCount": { "type": "number", "title": "Like Count" },
+      "commentCount": { "type": "number", "title": "Comment Count" }
     },
     "required": ["videoId", "title"]
+  },
+  "relations": {
+    "belongs_to_playlist": {
+      "title": "Belongs to Playlist",
+      "target": "youtubePlaylist",
+      "required": false,
+      "many": false
+    }
   }
 }
 ```
 
-#### Blueprint for YouTube Playlist
-
+### Blueprint for YouTube Playlist
 - **Properties**:
   - `playlistId`: string (required)
   - `title`: string (required)
@@ -70,33 +88,43 @@ Create blueprints for both `YouTube Video` and `YouTube Playlist`:
   - `videoCount`: number
   - `thumbnailUrl`: string
   - `created_at`: string
+- **Relation**: `has_videos` to `YouTube Video`.
 
 **Example JSON**:
-```json showLineNumbers
+```json
 {
   "identifier": "youtubePlaylist",
   "title": "YouTube Playlist",
+  "icon": "Widget",
   "schema": {
     "properties": {
-      "playlistId": {"type": "string", "title": "Playlist ID"},
-      "title": {"type": "string", "title": "Title"},
-      "description": {"type": "string", "title": "Description"},
-      "videoCount": {"type": "number", "title": "Video Count"},
-      "thumbnailUrl": {"type": "string", "title": "Thumbnail URL"},
-      "created_at": {"type": "string", "title": "CreatedAt"}
+      "playlistId": { "type": "string", "title": "Playlist ID" },
+      "title": { "type": "string", "title": "Title" },
+      "description": { "type": "string", "title": "Description" },
+      "videoCount": { "type": "number", "title": "Video Count" },
+      "thumbnailUrl": { "type": "string", "title": "Thumbnail URL" },
+      "created_at": { "type": "string", "title": "CreatedAt" }
     },
     "required": ["playlistId", "title"]
+  },
+  "relations": {
+    "has_videos": {
+      "title": "Has Videos",
+      "target": "youtubeVideo",
+      "required": false,
+      "many": true
+    }
   }
 }
 ```
 
-<br/>
+---
 
-### Step 2: Set Up the GitHub Workflow
+## Step 2: Set Up the GitHub Workflow
 
-Create a GitHub workflow file (`.github/workflows/sync_youtube_data.yml`):
+Create a GitHub workflow file at `.github/workflows/sync_youtube_data.yml`:
 
-```yaml showLineNumbers
+```yaml
 name: Sync YouTube Data to Port
 
 on:
@@ -130,13 +158,22 @@ jobs:
           python .github/scripts/sync_youtube.py
 ```
 
-<br/>
+### Add Secrets
+Add the following secrets to your GitHub repository:
 
-### Step 3: Implement the YouTube Data Sync Script
+1. Go to **Settings** > **Secrets and Variables** > **Actions**.
+2. Create secrets:
+   - `PORT_CLIENT_ID`: Your Port Client ID
+   - `PORT_CLIENT_SECRET`: Your Port Client Secret
+   - `YOUTUBE_API_KEY`: Your YouTube API Key
+
+---
+
+## Step 3: Implement the YouTube Data Sync Script
 
 Create a script (`.github/scripts/sync_youtube.py`):
 
-```python showLineNumbers
+```python
 import requests
 import os
 from googleapiclient.discovery import build
@@ -162,30 +199,28 @@ youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 # (Add your detailed data ingestion logic here)
 ```
 
-<PortApiRegionTip/>
+---
 
-<br/>
+## Step 4: Run and Verify the Workflow
 
-### Step 4: Run and Verify Workflow
+1. **Trigger the Action**: Run the GitHub action manually or wait for the scheduled run.
+2. **Check the Logs**: Review the workflow logs for the status of the ingestion process.
+3. **Verify in Port**: Ensure the data appears in your Port account with proper relationships.
 
-1. Trigger the GitHub action manually or wait for the scheduled run.
-2. Verify the ingestion status in the workflow logs.
-3. Check the data in your Port account.
+---
 
-<br/>
+## Step 5: Visualize Data in Port
 
-### Step 5: Visualize Data in Port
+Leverage Port's visualization tools for insights:
 
-Create custom visualizations in Port for better insights:
+- **Playlist Metrics**: Display video count and total views.
+- **Engagement Analysis**: Use dashboards to monitor likes and comments.
 
-- **Playlist metrics**: Visualize video count and total views.
-- **Engagement analysis**: Use dashboards to analyze likes and comments.
+---
 
-<br/>
+## Conclusion
 
-### Conclusion
-
-Following this guide, you can ingest YouTube playlist data into Port and visualize it effectively, enabling data-driven decisions and optimizing your content strategy.
+By following this guide, you can effectively ingest and visualize YouTube playlist data in Port, enabling data-driven decisions and enhancing your content strategy.
 
 ---
 
