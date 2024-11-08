@@ -80,7 +80,7 @@ def create_or_update_entity(api_url, blueprint_id, entity_data, access_token):
     response.raise_for_status()  # Raise an error for bad responses
     return response.json()
 
-# Main execution flow
+
 def main():
     access_token = get_access_token(CLIENT_ID, CLIENT_SECRET)
     
@@ -94,14 +94,19 @@ def main():
             "title": playlist['snippet']['title'],
             "description": playlist['snippet'].get('description', ''),
             "videoCount": playlist['contentDetails']['itemCount']
+        },
+        "relations": {
+            "has_videos": []  # Will be populated with video IDs
         }
     }
-    create_or_update_entity(API_URL, "youtube-playlist", playlist_entity, access_token)
     
     # Fetch and sync videos
     videos = fetch_playlist_items(YOUTUBE_API_KEY, PLAYLIST_ID)
+    video_ids = []  # Store video IDs to update playlist relations
+    
     for video in videos:
         video_id = video['contentDetails']['videoId']
+        video_ids.append(video_id)
         
         # Fetch video duration
         duration = get_video_duration(YOUTUBE_API_KEY, video_id)
@@ -114,14 +119,17 @@ def main():
                 "videoId": video_id,
                 "description": video['snippet'].get('description', ''),
                 "thumbnailUrl": video['snippet']['thumbnails']['default']['url'],
-                "duration": duration  # Add duration to the properties
+                "duration": duration
+            },
+            "relations": {
+                "belongs_to_playlist": [PLAYLIST_ID]  # Make it an array even though it's a single value
             }
-            # ,
-            # "relations": {
-            #     "playlist_video_relationship": PLAYLIST_ID  # This links the video to the playlist
-            # }
         }
         create_or_update_entity(API_URL, "youtube-video", video_entity, access_token)
+    
+    # Update playlist with all video IDs
+    playlist_entity["relations"]["has_videos"] = video_ids
+    create_or_update_entity(API_URL, "youtube-playlist", playlist_entity, access_token)
 
 if __name__ == "__main__":
     main()
