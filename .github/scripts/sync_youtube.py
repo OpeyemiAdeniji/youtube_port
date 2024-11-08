@@ -99,18 +99,6 @@ while True:
         duration_str = format_duration(youtube_duration)
         
         # Create video entity with additional properties
-
-        viewCount_q = video_details['statistics']['viewCount']  # New property
-        print(f'View - {video_id}',viewCount_q)
-        likeCount_q = video_details['statistics']['likeCount']  # New property
-        print(f'Like - {video_id}',likeCount_q)
-        commentCount_q =  video_details['statistics'].get('commentCount','0') 
-        if commentCount_q == 0:
-            print("error", err)
-            err += 1
-        print(f'Comment - {video_id}',commentCount_q)
-
-        #
         video_entity = {
             "identifier": video_id,
             "title": item['snippet']['title'],
@@ -120,9 +108,9 @@ while True:
                 "description": item['snippet'].get('description', 'No description available'),
                 "thumbnailUrl": item['snippet']['thumbnails']['default']['url'],
                 "duration": duration_str,
-                "viewCount": video_details['statistics']['viewCount'],  # New property
-                "likeCount": video_details['statistics']['likeCount'],  # New property
-                "commentCount": video_details['statistics']['commentCount']  # New property
+                "viewCount": video_details['statistics'].get('viewCount','0'),
+                "likeCount": video_details['statistics'].get('likeCount','0'),
+                "commentCount": video_details['statistics'].get('commentCount','0')
             },
             "relations": {
                 "belongs_to_playlist": [PLAYLIST_ID]
