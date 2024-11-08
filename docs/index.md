@@ -1,15 +1,3 @@
-
----
-sidebar_position: 4
-displayed_sidebar: null
-description: Learn how to ingest and visualize YouTube playlist and video data in Port to optimize content strategies and gain insights.
----
-
-import Tabs from "@theme/Tabs"
-import TabItem from "@theme/TabItem"
-import PortTooltip from "/src/components/tooltip/tooltip.jsx"
-import PortApiRegionTip from "/docs/generalTemplates/_port_region_parameter_explanation_template.md"
-
 # Ingest and Visualize YouTube Playlist Data in Port
 
 This guide takes approximately 30 minutes to complete and aims to demonstrate the value of Port's integration with external data sources like YouTube.
