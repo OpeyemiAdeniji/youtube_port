@@ -272,7 +272,7 @@ while True:
         youtube_duration = video_details['contentDetails']['duration']
         duration_obj = isodate.parse_duration(youtube_duration)
         minutes = int(duration_obj.total_seconds() // 60)
-        seconds = int(duration_obj.total_seconds() % 60
+        seconds = int(duration_obj.total_seconds() % 60)
         duration_str = f"{minutes}:{seconds:02d}"
         
         # Create video entity with formatted duration
