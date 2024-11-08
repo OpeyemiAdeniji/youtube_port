@@ -33,6 +33,8 @@ Click on **"Builder"** in the left-hand navigation menu. This is where you creat
    - **Identifier**: `youtubeVideo`
    - **Title**: `YouTube Video`
    - **Icon**: Choose an icon representing a video (optional).
+     
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/38fe0d01-760d-4f2e-8d0d-672b8256124c">
 
 ### Define the Schema
 Add properties to the YouTube Video blueprint with names, types, and whether they are required:
@@ -48,6 +50,8 @@ Add properties to the YouTube Video blueprint with names, types, and whether the
   - `likeCount`: number
   - `commentCount`: number
 - **Relation**: `belongs_to_playlist` to `YouTube Playlist`.
+
+<img width="1437" alt="image" src="https://github.com/user-attachments/assets/109b68a5-c29f-4d43-b79e-9e358945f0d7">
 
 **Example JSON**:
 ```json
@@ -79,6 +83,7 @@ Add properties to the YouTube Video blueprint with names, types, and whether the
   }
 }
 ```
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/f5be5730-839a-4238-8016-aedaf24eec49">
 
 ### Blueprint for YouTube Playlist
 - **Properties**:
@@ -89,6 +94,8 @@ Add properties to the YouTube Video blueprint with names, types, and whether the
   - `thumbnailUrl`: string
   - `created_at`: string
 - **Relation**: `has_videos` to `YouTube Video`.
+
+<img width="1437" alt="image" src="https://github.com/user-attachments/assets/7807873b-7cd9-469e-b4d7-f57be13808c4">
 
 **Example JSON**:
 ```json
@@ -117,6 +124,7 @@ Add properties to the YouTube Video blueprint with names, types, and whether the
   }
 }
 ```
+<img width="1437" alt="image" src="https://github.com/user-attachments/assets/8e707aa2-b041-4e62-a4d9-f1a02e6baac9">
 
 ---
 
@@ -205,7 +213,12 @@ youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 1. **Trigger the Action**: Run the GitHub action manually or wait for the scheduled run.
 2. **Check the Logs**: Review the workflow logs for the status of the ingestion process.
-3. **Verify in Port**: Ensure the data appears in your Port account with proper relationships.
+   
+<img width="1439" alt="image" src="https://github.com/user-attachments/assets/1c46fa56-7370-421b-ba42-b9c5415471e6">
+
+4. **Verify in Port**: Ensure the data appears in your Port account with proper relationships.
+   
+   <img width="1433" alt="image" src="https://github.com/user-attachments/assets/e1d69c90-fde8-4ede-83ae-e4111fb398d6">
 
 ---
 
@@ -215,6 +228,8 @@ Leverage Port's visualization tools for insights:
 
 - **Playlist Metrics**: Display video count and total views.
 - **Engagement Analysis**: Use dashboards to monitor likes and comments.
+
+  <img width="1435" alt="image" src="https://github.com/user-attachments/assets/17684b56-3b9d-4b74-9cc4-37c7ee165db8">
 
 ---
 
