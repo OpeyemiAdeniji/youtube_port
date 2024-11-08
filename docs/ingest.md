@@ -5,9 +5,9 @@ This guide takes approximately 30 minutes to complete and demonstrates the value
 
 ## Prerequisites
 
-- Ensure you have a Port account and have completed the [onboarding process](/quickstart).
-- Access to a GitHub repository for workflow integration.
-- API keys and credentials: Port Client ID, Client Secret, and YouTube API Key.
+- Ensure you have a [Port](https://www.getport.io/) account and have completed the [onboarding process](https://docs.getport.io/quickstart).
+- Access to a [GitHub](https://github.com/) repository for workflow integration.
+- API keys and credentials: Port [Client ID and Client Secret](https://docs.getport.io/build-your-software-catalog/custom-integration/api/#find-your-port-credentials), and [YouTube API Key](https://developers.google.com/youtube/v3/docs#calling-the-api).
 
 ## Goal of This Guide
 
