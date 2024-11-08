@@ -100,11 +100,11 @@ while True:
         # Create video entity with additional properties
 
         viewCount_q = video_details['statistics']['viewCount']  # New property
-        print(viewCount_q)
+        print(f'View - {video_id}',viewCount_q)
         likeCount_q = video_details['statistics']['likeCount']  # New property
-        print(likeCount_q)
+        print(f'Like - {video_id}',likeCount_q)
         commentCount_q =  video_details['statistics']['commentCount'] 
-        print(commentCount_q)
+        print(f'Comment - {video_id}',commentCount_q)
 
         #
         video_entity = {
