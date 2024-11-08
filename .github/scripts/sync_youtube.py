@@ -115,9 +115,6 @@ def main():
                 "description": video['snippet'].get('description', ''),
                 "thumbnailUrl": video['snippet']['thumbnails']['default']['url'],
                 "duration": duration  # Add duration to the properties
-            },
-            "relations": {
-                "playlist_video_relationship": PLAYLIST_ID  # Use the correct relation identifier
             }
         }
         create_or_update_entity(API_URL, "youtube-video", video_entity, access_token)
