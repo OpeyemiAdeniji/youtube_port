@@ -20,7 +20,7 @@ jobs:
           
       - name: Install dependencies
         run: |
-          pip install google-api-python-client
+          pip install google-api-python-client pip install isodate
 
       - name: Sync YouTube data
         env:
