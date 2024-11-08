@@ -12,25 +12,21 @@ CLIENT_SECRET = os.environ.get('PORT_CLIENT_SECRET')
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
 PLAYLIST_ID = 'PL5ErBr2d3QJH0kbwTQ7HSuzvBb4zIWzhy'
 
-# Ensure all required environment variables are present
 if not all([CLIENT_ID, CLIENT_SECRET, YOUTUBE_API_KEY, PLAYLIST_ID]):
     raise ValueError("Missing required environment variables")
 
-# Step 1: Get access token from Port API
 def get_access_token(client_id, client_secret):
     credentials = {'clientId': client_id, 'clientSecret': client_secret}
     token_response = requests.post(f'{API_URL}/auth/access_token', json=credentials)
-    token_response.raise_for_status()  # Raise an error for bad responses
+    token_response.raise_for_status()
     return token_response.json()['accessToken']
 
-# Step 2: Fetch playlist details from YouTube
 def fetch_playlist_details(youtube_api_key, playlist_id):
     youtube = build('youtube', 'v3', developerKey=youtube_api_key)
     request = youtube.playlists().list(part="snippet,contentDetails", id=playlist_id)
     response = request.execute()
     return response['items'][0]
 
-# Step 3: Fetch all videos in the playlist
 def fetch_playlist_items(youtube_api_key, playlist_id):
     youtube = build('youtube', 'v3', developerKey=youtube_api_key)
     items = []
@@ -40,51 +36,28 @@ def fetch_playlist_items(youtube_api_key, playlist_id):
         response = request.execute()
         items.extend(response['items'])
         request = youtube.playlistItems().list_next(request, response)
-        time.sleep(0.1)  # Respect YouTube API quota
+        time.sleep(0.1)
 
     return items
 
-# Fetch video duration using YouTube API
 def get_video_duration(youtube_api_key, video_id):
     youtube = build('youtube', 'v3', developerKey=youtube_api_key)
     request = youtube.videos().list(part="contentDetails", id=video_id)
     response = request.execute()
-    duration = response['items'][0]['contentDetails']['duration']
-    return duration
+    return response['items'][0]['contentDetails']['duration']
 
-# Check if entity exists
-def get_entity(api_url, blueprint_id, identifier, access_token):
+def create_entity(api_url, blueprint_id, entity_data, access_token):
     headers = {
         'Authorization': f'Bearer {access_token}'
     }
-    response = requests.get(f'{api_url}/blueprints/{blueprint_id}/entities/{identifier}', headers=headers)
-    if response.status_code == 404:
-        return None  # Entity does not exist
-    response.raise_for_status()  # Raise an error for other bad responses
+    response = requests.post(f'{api_url}/blueprints/{blueprint_id}/entities', json=entity_data, headers=headers)
+    response.raise_for_status()
     return response.json()
 
-# Create or update an entity
-def create_or_update_entity(api_url, blueprint_id, entity_data, access_token):
-    existing_entity = get_entity(api_url, blueprint_id, entity_data["identifier"], access_token)
-    headers = {
-        'Authorization': f'Bearer {access_token}'
-    }
-    
-    if existing_entity:
-        # Update the existing entity
-        response = requests.put(f'{api_url}/blueprints/{blueprint_id}/entities/{entity_data["identifier"]}', json=entity_data, headers=headers)
-    else:
-        # Create a new entity
-        response = requests.post(f'{api_url}/blueprints/{blueprint_id}/entities', json=entity_data, headers=headers)
-    
-    response.raise_for_status()  # Raise an error for bad responses
-    return response.json()
-
-# Main execution flow
 def main():
     access_token = get_access_token(CLIENT_ID, CLIENT_SECRET)
     
-    # Fetch and sync playlist
+    # Create or update playlist entity
     playlist = fetch_playlist_details(YOUTUBE_API_KEY, PLAYLIST_ID)
     playlist_entity = {
         "identifier": PLAYLIST_ID,
@@ -96,14 +69,12 @@ def main():
             "videoCount": playlist['contentDetails']['itemCount']
         }
     }
-    create_or_update_entity(API_URL, "youtube-playlist", playlist_entity, access_token)
+    create_entity(API_URL, "youtube-playlist", playlist_entity, access_token)
     
-    # Fetch and sync videos
+    # Create or update video entities with relations
     videos = fetch_playlist_items(YOUTUBE_API_KEY, PLAYLIST_ID)
     for video in videos:
         video_id = video['contentDetails']['videoId']
-        
-        # Fetch video duration
         duration = get_video_duration(YOUTUBE_API_KEY, video_id)
         
         video_entity = {
@@ -114,10 +85,13 @@ def main():
                 "videoId": video_id,
                 "description": video['snippet'].get('description', ''),
                 "thumbnailUrl": video['snippet']['thumbnails']['default']['url'],
-                "duration": duration  # Add duration to the properties
+                "duration": duration
+            },
+            "relations": {
+                "playlist_video_relationship": PLAYLIST_ID
             }
         }
-        create_or_update_entity(API_URL, "youtube-video", video_entity, access_token)
+        create_entity(API_URL, "youtube-video", video_entity, access_token)
 
 if __name__ == "__main__":
     main()
