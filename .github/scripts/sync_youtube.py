@@ -187,6 +187,14 @@ API_URL = 'https://api.getport.io/v1'
 # YOUTUBE_API_KEY = 'YOUR_YOUTUBE_API_KEY'
 # PLAYLIST_ID = 'YOUR_PLAYLIST_ID'
 
+
+# def format_duration(youtube_duration):
+#     # Convert ISO 8601 duration to readable format
+#     duration_obj = isodate.parse_duration(youtube_duration)
+#     minutes = int(duration_obj.total_seconds() // 60)
+#     seconds = int(duration_obj.total_seconds() % 60)
+#     return f"{minutes}:{seconds:02d}"
+
 # Step 1: Get Port.io access token
 credentials = {
     'clientId': CLIENT_ID,
@@ -195,7 +203,6 @@ credentials = {
 token_response = requests.post(f'{API_URL}/auth/access_token', json=credentials)
 access_token = token_response.json()['accessToken']
 
-# Create headers for Port.io API calls
 headers = {
     'Authorization': f'Bearer {access_token}'
 }
@@ -203,22 +210,22 @@ headers = {
 # Step 2: Set up YouTube API
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
-# Step 3: Get playlist information
+# Step 3: Get playlist information with full details
 playlist_request = youtube.playlists().list(
-    part="snippet,contentDetails",
+    part="snippet,contentDetails,status",  # Added more parts to get full details
     id=PLAYLIST_ID
 )
 playlist_response = playlist_request.execute()
 playlist = playlist_response['items'][0]
 
-# Step 4: Create playlist entity for Port
+# Step 4: Create playlist entity for Port with description
 playlist_entity = {
     "identifier": PLAYLIST_ID,
     "title": playlist['snippet']['title'],
     "properties": {
         "playlistId": PLAYLIST_ID,
         "title": playlist['snippet']['title'],
-        "description": playlist['snippet'].get('description', ''),
+        "description": playlist['snippet'].get('description', 'No description available'),  # Default value if empty
         "videoCount": playlist['contentDetails']['itemCount']
     },
     "relations": {
@@ -253,24 +260,31 @@ while True:
         video_id = item['contentDetails']['videoId']
         video_ids.append(video_id)
         
-        # Get video duration
+        # Get video duration and other details
         video_request = youtube.videos().list(
-            part="contentDetails",
+            part="contentDetails,snippet",  # Added snippet to get full details
             id=video_id
         )
         video_response = video_request.execute()
-        duration = video_response['items'][0]['contentDetails']['duration']
+        video_details = video_response['items'][0]
         
-        # Create video entity
+        # Format the duration to be readable
+        youtube_duration = video_details['contentDetails']['duration'])
+        duration_obj = isodate.parse_duration(youtube_duration)
+        minutes = int(duration_obj.total_seconds() // 60)
+        seconds = int(duration_obj.total_seconds() % 60
+        duration_str = f"{minutes}:{seconds:02d}"
+        
+        # Create video entity with formatted duration
         video_entity = {
             "identifier": video_id,
             "title": item['snippet']['title'],
             "properties": {
                 "title": item['snippet']['title'],
                 "videoId": video_id,
-                "description": item['snippet'].get('description', ''),
+                "description": item['snippet'].get('description', 'No description available'),  # Default value if empty
                 "thumbnailUrl": item['snippet']['thumbnails']['default']['url'],
-                "duration": duration
+                "duration": duration_str  # Now using formatted duration
             },
             "relations": {
                 "belongs_to_playlist": [PLAYLIST_ID]
