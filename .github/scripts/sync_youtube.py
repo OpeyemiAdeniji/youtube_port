@@ -52,13 +52,31 @@ def get_video_duration(youtube_api_key, video_id):
     duration = response['items'][0]['contentDetails']['duration']
     return duration
 
-# Step 4: Create an entity in Port
-def create_entity(api_url, blueprint_id, entity_data, access_token):
-    print(blueprint_id)
+# Check if entity exists
+def get_entity(api_url, blueprint_id, identifier, access_token):
     headers = {
         'Authorization': f'Bearer {access_token}'
     }
-    response = requests.post(f'{api_url}/blueprints/{blueprint_id}/entities', json=entity_data, headers=headers)
+    response = requests.get(f'{api_url}/blueprints/{blueprint_id}/entities/{identifier}', headers=headers)
+    if response.status_code == 404:
+        return None  # Entity does not exist
+    response.raise_for_status()  # Raise an error for other bad responses
+    return response.json()
+
+# Create or update an entity
+def create_or_update_entity(api_url, blueprint_id, entity_data, access_token):
+    existing_entity = get_entity(api_url, blueprint_id, entity_data["identifier"], access_token)
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    
+    if existing_entity:
+        # Update the existing entity
+        response = requests.put(f'{api_url}/blueprints/{blueprint_id}/entities/{entity_data["identifier"]}', json=entity_data, headers=headers)
+    else:
+        # Create a new entity
+        response = requests.post(f'{api_url}/blueprints/{blueprint_id}/entities', json=entity_data, headers=headers)
+    
     response.raise_for_status()  # Raise an error for bad responses
     return response.json()
 
@@ -78,7 +96,7 @@ def main():
             "videoCount": playlist['contentDetails']['itemCount']
         }
     }
-    create_entity(API_URL, "youtube-playlist", playlist_entity, access_token)
+    create_or_update_entity(API_URL, "youtube-playlist", playlist_entity, access_token)
     
     # Fetch and sync videos
     videos = fetch_playlist_items(YOUTUBE_API_KEY, PLAYLIST_ID)
@@ -102,7 +120,7 @@ def main():
                 "playlist": PLAYLIST_ID
             }
         }
-        create_entity(API_URL, "youtube-video", video_entity, access_token)
+        create_or_update_entity(API_URL, "youtube-video", video_entity, access_token)
 
 if __name__ == "__main__":
     main()
