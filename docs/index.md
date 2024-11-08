@@ -175,6 +175,8 @@ Add the following secrets to your GitHub repository:
    - `PORT_CLIENT_SECRET`: Your Port Client Secret
    - `YOUTUBE_API_KEY`: Your YouTube API Key
 
+   <img width="1440" alt="image" src="https://github.com/user-attachments/assets/cecdb05d-f314-47e8-ac84-0091a7a8c0fe">
+
 ---
 
 ## Step 3: Implement the YouTube Data Sync Script
@@ -212,7 +214,9 @@ youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 ## Step 4: Run and Verify the Workflow
 
 1. **Trigger the Action**: Run the GitHub action manually or wait for the scheduled run.
-2. **Check the Logs**: Review the workflow logs for the status of the ingestion process.
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/a3b2c496-f5eb-4621-9ab0-d75eb3005f3d">
+
+3. **Check the Logs**: Review the workflow logs for the status of the ingestion process.
    
 <img width="1439" alt="image" src="https://github.com/user-attachments/assets/1c46fa56-7370-421b-ba42-b9c5415471e6">
 
