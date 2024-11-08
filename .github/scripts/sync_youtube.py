@@ -176,7 +176,7 @@ import time
 CLIENT_ID = os.environ.get('PORT_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('PORT_CLIENT_SECRET')
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
-PLAYLIST_ID = 'PLpceAx4bWoTMmBJ-TL2g0futt0CSja6Jc'
+PLAYLIST_ID = 'PL5ErBr2d3QJH0kbwTQ7HSuzvBb4zIWzhy'
 
 # Port.io configuration
 # CLIENT_ID = 'YOUR_PORT_CLIENT_ID'
