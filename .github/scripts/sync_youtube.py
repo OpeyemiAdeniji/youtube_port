@@ -269,7 +269,7 @@ while True:
         video_details = video_response['items'][0]
         
         # Format the duration to be readable
-        youtube_duration = video_details['contentDetails']['duration'])
+        youtube_duration = video_details['contentDetails']['duration']
         duration_obj = isodate.parse_duration(youtube_duration)
         minutes = int(duration_obj.total_seconds() // 60)
         seconds = int(duration_obj.total_seconds() % 60
