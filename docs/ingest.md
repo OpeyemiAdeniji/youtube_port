@@ -25,7 +25,7 @@ This guide will walk you through:
 Access Port's web app and log in with your credentials.
 
 ### 1.2 Navigate to the Builder Section
-Click on **"Builder"** in the left-hand navigation menu. This is where you create and manage blueprints.
+Click on **"Builder"** in the left-hand navigation menu. This is where you create and manage [blueprints](https://docs.getport.io/build-your-software-catalog/customize-integrations/configure-data-model/setup-blueprint/).
 
 ### 1.3 Create a Blueprint for YouTube Video
 1. Click on **"New Blueprint"** at the top right corner of the Builder page.
@@ -181,7 +181,7 @@ Add the following secrets to your GitHub repository:
 
 ## Step 3: Implement the YouTube Data Sync Script
 
-Create a script (`.github/scripts/sync_youtube.py`):
+Create a [script](https://docs.getport.io/build-your-software-catalog/custom-integration/api/#usage) (`.github/scripts/sync_youtube.py`):
 
 ```python
 import requests
@@ -332,7 +332,7 @@ final_playlist_response = requests.post(
 
 ## Step 5: Visualize Data in Port
 
-Leverage Port's visualization tools for insights:
+Leverage Port's [visualization](https://docs.getport.io/customize-pages-dashboards-and-plugins/dashboards/) tools for insights:
 
 - **Playlist Metrics**: Display video count and total views.
 - **Engagement Analysis**: Use dashboards to monitor likes and comments.
