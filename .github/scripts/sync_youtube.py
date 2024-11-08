@@ -105,7 +105,7 @@ while True:
         likeCount_q = video_details['statistics']['likeCount']  # New property
         print(f'Like - {video_id}',likeCount_q)
         commentCount_q =  video_details['statistics'].get('commentCount','0') 
-        if commentCount == 0:
+        if commentCount_q == 0:
             print("error", err)
             err += 1
         print(f'Comment - {video_id}',commentCount_q)
