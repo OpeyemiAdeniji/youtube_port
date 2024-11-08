@@ -10,7 +10,7 @@ API_URL = 'https://api.getport.io/v1'
 CLIENT_ID = os.environ.get('PORT_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('PORT_CLIENT_SECRET')
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
-PLAYLIST_ID = 'PL5ErBr2d3QJH0kbwTQ7HSuzvBb4zIWzhy'
+PLAYLIST_ID = 'PLpceAx4bWoTMmBJ-TL2g0futt0CSja6Jc'
 
 # Ensure all required environment variables are present
 if not all([CLIENT_ID, CLIENT_SECRET, YOUTUBE_API_KEY, PLAYLIST_ID]):
@@ -115,6 +115,9 @@ def main():
                 "description": video['snippet'].get('description', ''),
                 "thumbnailUrl": video['snippet']['thumbnails']['default']['url'],
                 "duration": duration  # Add duration to the properties
+            },
+            "relations": {
+                "playlist_video_relationship": PLAYLIST_ID  # This links the video to the playlist
             }
         }
         create_or_update_entity(API_URL, "youtube-video", video_entity, access_token)
