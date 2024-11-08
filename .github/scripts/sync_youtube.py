@@ -81,6 +81,7 @@ while True:
             part="contentDetails,snippet,statistics",
             id=video_id
         )
+        
         video_response = video_request.execute()
         video_details = video_response['items'][0]
         
